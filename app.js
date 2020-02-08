@@ -13,6 +13,9 @@ let products = [];
        products.forEach((product,index)=> {
             console.log(product.title)
         }) */
+       for(let product of products){
+           console.log(product.price)
+       }
 
     });
 
