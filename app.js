@@ -1,55 +1,20 @@
-//immutable variables
-const cartBtn = document.querySelector(".cart-btn");
-const closeCartBtn = document.querySelector(".close-cart");
-const clearCartBn = document.querySelector(".clear-cart");
-const cartDom = document.querySelector(".cart");
-const cartOverlay = document.querySelector(".cart-overlay");
-const cartItems = document.querySelector(".cart-items");
-const cartTotal = document.querySelector(".cart-total");
-const cartContent = document.querySelector(".cart-content");
-const productsDOM = document.querySelector(".products-center");
+let products = [];
 
-//cart
-let cart = [];
+ fetch('products.json')
+    .then(response => response.json())
+    .then((data)=>{
+        products = data;
+        /*for loop
+        for(let i=0;i<products.length; i++){
+            let item = products[i];
+        } */
 
-//get products
-class Products {
-    async getProducts(){
-        try {
-            let result= await fetch('products.json');
-            let data = await  result.json();
-            let products = data.items;
-            console.log(products);
-            products = products.map(item=>{
-                const {title, price} =item.fields;
-                return {price,title}
+       /* foreach loop
+       products.forEach((product,index)=> {
+            console.log(product.title)
+        }) */
 
-            })
-            return products
-        }
-        catch (error) {
-            console.log(error);
-
-        }
-
-    }
-
-}
-
-//display products
-class UI{
-
-}
-
-class Storage{
-
-}
-
-document.addEventListener("DomContentLoaded",()=>{
-    const ui= new UI;
-    const products = new Products();
-    products.getProducts().then(data =>console.log(data));
-});
+    });
 
 
 
