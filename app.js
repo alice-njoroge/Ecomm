@@ -18,8 +18,14 @@ class Products {
         try {
             let result= await fetch('products.json');
             let data = await  result.json();
-            console.log(data)
-            return data;
+            let products = data.items;
+            console.log(products);
+            products = products.map(item=>{
+                const {title, price} =item.fields;
+                return {price,title}
+
+            })
+            return products
         }
         catch (error) {
             console.log(error);
@@ -42,7 +48,8 @@ class Storage{
 document.addEventListener("DomContentLoaded",()=>{
     const ui= new UI;
     const products = new Products();
-    products.getProducts();
+    products.getProducts().then(data =>console.log(data));
 });
+
 
 
