@@ -1,26 +1,9 @@
-let products = [];
-
+// fetch data from products.json
 fetch('products.json')
     .then(response => response.json())
-    .then((data) => {
-        products = data;
-        /*for loop
-        for(let i=0;i<products.length; i++){
-            let item = products[i];
-        } */
-        /* foreach
-       products.forEach((product,index)=> {
-            console.log(product.title)
-        }) */
+    .then((products) => {
 
-        /* for of
-        for(let product of products){
-            console.log(product.price)
-        }
-         */
         let productsHtmlString = '';
-
-
         products.map((product, index) => {
             let productString = `
         <article class="product">
@@ -30,13 +13,28 @@ fetch('products.json')
             </div>
             <h3>${product.title}</h3>
             <h4>$${product.price}</h4>
-        </article>`
+        </article>`;
             productsHtmlString += productString;
         });
+        // send data to the UI
         document.querySelector('.products-center').innerHTML = productsHtmlString;
-
-
+        // add item to cart
+        let addToBagButton = document.querySelectorAll('.bag-btn');
+        addToBagButton.forEach(button => {
+            button.addEventListener('click',event=>{
+                let button = event.target;
+                button.innerText = 'Added to Bag';
+                button.disabled= true;
+               let productId =  button.dataset.id;
+               let product = products.find(product => {
+                   return product.id === productId;
+               });
+                console.log(product.price);
+            })
+        })
     });
+
+
 
 
 
