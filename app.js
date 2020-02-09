@@ -1,3 +1,8 @@
+function openCart() {
+    document.querySelector('.cart-overlay').style.visibility='visible';
+
+}
+
 // fetch data from products.json
 fetch('products.json')
     .then(response => response.json())
@@ -18,8 +23,11 @@ fetch('products.json')
         });
         // send data to the UI
         document.querySelector('.products-center').innerHTML = productsHtmlString;
+        document.querySelector('.products-center').innerHTML = productsHtmlString;
+
         // get item id on click
         let addToBagButton = document.querySelectorAll('.bag-btn');
+        let newItems = '';
         addToBagButton.forEach(button => {
             button.addEventListener('click', event => {
                 let button = event.target; //get the actual button id on click
@@ -29,6 +37,25 @@ fetch('products.json')
                 let product = products.find(product => { // compare if the array id and the returned id are the same
                     return product.id === productId;
                 });
+                //add item to cart
+
+                let cartProduct = `<div class="cart-item">
+                <img src="${product.image}" alt="${product.title}">
+                <div>
+                    <h4>${product.title}</h4>
+                    <h5>$${product.price}</h5>
+                    <span class="remove-item">remove</span>
+                </div>
+                <div>
+                    <i class="fas fa-chevron-up"></i>
+                    <p class="item-amount">4</p>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>`;
+                newItems += cartProduct;
+                // show cart on the screen
+                openCart();
+
                 //add items to local storage
                 let cartItems = localStorage.getItem('cartItems');
                 if (cartItems) {
@@ -44,8 +71,4 @@ fetch('products.json')
             })
         })
     });
-
-
-
-
 
