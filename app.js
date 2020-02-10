@@ -1,5 +1,6 @@
 /**
  * calculate totals for each product
+ * @param products
  */
 function grandTotals(products) {
 let grandTotal = 0;
@@ -10,8 +11,6 @@ products.forEach(product =>{
 });
 document.querySelector('.cart-total').innerText = grandTotal;
 document.querySelector('.grand-cart-total').innerText = grandDiscountedTotal;
-
-
 }
 
 /**
@@ -33,20 +32,19 @@ function calculateDiscounts(quantity) {
     return parseFloat(discount.toFixed(2));
 }
 
-
 /**
- * add quantity by one on clicking chevron up
+ * change quantity by one on clicking chevron up or down
  * @param itemId
- * @param direction
+ * @param change
  */
-function chevron(itemId, direction) {
+function changeQuantity(itemId, change) {
     let cartItem = localStorage.getItem('cartItems');
     if (cartItem) {
         let cartItemArray = JSON.parse(cartItem);
         let productIndex = cartItemArray.findIndex(item => {
             return item.id === itemId;
         });
-        if (direction === 'up') {
+        if (change === 'add') {
             cartItemArray[productIndex].quantity += 1;
         } else {
             if (cartItemArray[productIndex].quantity > 1) {
@@ -225,6 +223,8 @@ function closeCart() {
     document.querySelector('.cart-overlay').style.visibility = 'hidden';
 }
 
+
+
 document.querySelector('.cart-btn').addEventListener('click', event => {
     openCart();
 });
@@ -244,11 +244,11 @@ document.querySelector('.cart-overlay').addEventListener('click', event => {
     }
     if (event.target.classList.contains('fa-chevron-up')) {
         let itemId = event.target.dataset.id;
-        chevron(itemId, 'up');
+        changeQuantity(itemId, 'add');
     }
     if (event.target.classList.contains('fa-chevron-down')) {
         let itemId = event.target.dataset.id;
-        chevron(itemId, 'down');
+        changeQuantity(itemId, 'less');
     }
 });
 // fetch data from products.json
@@ -267,6 +267,7 @@ fetch('products.json')
     });
 
 populateCartOnLoad();
+
 document.querySelector('.shop-now').addEventListener('click', event=>{
     document.querySelector('.products').scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
