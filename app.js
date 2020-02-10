@@ -9,8 +9,8 @@ products.forEach(product =>{
     grandTotal += product.total;
     grandDiscountedTotal += product.discountedTotal;
 });
-document.querySelector('.cart-total').innerText = grandTotal;
-document.querySelector('.grand-cart-total').innerText = grandDiscountedTotal;
+document.querySelector('.cart-total').innerText = parseFloat(grandTotal.toFixed(2));
+document.querySelector('.grand-cart-total').innerText = parseFloat(grandDiscountedTotal.toFixed(2));
 }
 
 /**
