@@ -1,8 +1,8 @@
 /**
- * calculate mini totals for each product
- * @param product
+ * calculate totals for each product
  */
-function miniTotals(product) {
+function grandTotals() {
+
 
 }
 
@@ -48,6 +48,8 @@ function chevron(itemId, direction) {
         cartItemArray[productIndex].discount = calculateDiscounts(cartItemArray[productIndex].quantity);
         let total = cartItemArray[productIndex].price * cartItemArray[productIndex].quantity;
         cartItemArray[productIndex].total =parseFloat(total.toFixed(2));
+        let discountedTotal = total - cartItemArray[productIndex].discount;
+        cartItemArray[productIndex].discountedTotal =parseFloat(discountedTotal.toFixed(2));
             localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
         sendItemsToCartUI(cartItemArray);
     }
@@ -62,7 +64,6 @@ function getAddToCartButton(itemId) {
     let bagButtons = [...document.querySelectorAll('.bag-btn')];
     return bagButtons.find(button => button.dataset.id === itemId)
 }
-
 /**
  * clear cart and repopulate the cart ui
  */
@@ -78,15 +79,20 @@ function clearCart() {
 function sendItemsToCartUI(items) {
     let cartItems = '';
     items.forEach(product => {
-
+        let discountString = '';
+        let discountedTotalString = '';
+        if(product.discount){
+            discountString = `<h5>Discount: $${product.discount}</h5>`;
+            discountedTotalString = `<h5>Discounted Total: $${product.discountedTotal}</h5>`;
+        }
         let cartProduct = `<div class="cart-item">
                 <img src="${product.image}" alt="${product.title}">
                 <div>
                     <h4>${product.title}</h4>
                     <h5>@: $${product.price}</h5>
-                    <h5>Discount: $${product.discount}</h5>
                     <h5>Total: $${product.total}</h5>
-                    <h5>Discounted Total: $${product.price}</h5>
+                    ${discountString}
+                    ${discountedTotalString}
                     <span data-id="${product.id}" class="remove-item">remove</span>
                 </div>
                 <div>
@@ -114,6 +120,7 @@ function addItemsToCart(button, products) {
     product['quantity'] = 1;
     product['discount'] = 0;
     product['total'] = product.price;
+    product['discountedTotal']= product.price;
 
     //add items to local storage
     let items;
