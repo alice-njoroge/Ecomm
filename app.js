@@ -1,7 +1,15 @@
 /**
  * calculate totals for each product
  */
-function grandTotals() {
+function grandTotals(products) {
+let grandTotal = 0;
+let grandDiscountedTotal = 0;
+products.forEach(product =>{
+    grandTotal += product.total;
+    grandDiscountedTotal += product.discountedTotal;
+});
+document.querySelector('.cart-total').innerText = grandTotal;
+document.querySelector('.grand-cart-total').innerText = grandDiscountedTotal;
 
 
 }
@@ -47,11 +55,12 @@ function chevron(itemId, direction) {
         }
         cartItemArray[productIndex].discount = calculateDiscounts(cartItemArray[productIndex].quantity);
         let total = cartItemArray[productIndex].price * cartItemArray[productIndex].quantity;
-        cartItemArray[productIndex].total =parseFloat(total.toFixed(2));
+        cartItemArray[productIndex].total = parseFloat(total.toFixed(2));
         let discountedTotal = total - cartItemArray[productIndex].discount;
-        cartItemArray[productIndex].discountedTotal =parseFloat(discountedTotal.toFixed(2));
-            localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
+        cartItemArray[productIndex].discountedTotal = parseFloat(discountedTotal.toFixed(2));
+        localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
         sendItemsToCartUI(cartItemArray);
+        grandTotals(cartItemArray);
     }
 
 }
@@ -64,6 +73,7 @@ function getAddToCartButton(itemId) {
     let bagButtons = [...document.querySelectorAll('.bag-btn')];
     return bagButtons.find(button => button.dataset.id === itemId)
 }
+
 /**
  * clear cart and repopulate the cart ui
  */
@@ -81,7 +91,7 @@ function sendItemsToCartUI(items) {
     items.forEach(product => {
         let discountString = '';
         let discountedTotalString = '';
-        if(product.discount){
+        if (product.discount) {
             discountString = `<h5>Discount: $${product.discount}</h5>`;
             discountedTotalString = `<h5>Discounted Total: $${product.discountedTotal}</h5>`;
         }
@@ -120,7 +130,7 @@ function addItemsToCart(button, products) {
     product['quantity'] = 1;
     product['discount'] = 0;
     product['total'] = product.price;
-    product['discountedTotal']= product.price;
+    product['discountedTotal'] = product.price;
 
     //add items to local storage
     let items;
@@ -138,6 +148,7 @@ function addItemsToCart(button, products) {
     }
     //send items to cart ui
     sendItemsToCartUI(items);
+    grandTotals(items);
     document.querySelector('.cart-items').innerText = items.length;
     // show cart on the screen
     openCart();
@@ -174,6 +185,7 @@ function populateCartOnLoad() {
         let cartItemsArray = JSON.parse(cartItems);
         document.querySelector('.cart-items').innerText = cartItemsArray.length;
         sendItemsToCartUI(cartItemsArray);
+        grandTotals(cartItemsArray);
     }
 }
 
@@ -191,6 +203,9 @@ function removeItemFromCart(itemId) {
         cartItemsArray.splice(itemIndex, 1);
         localStorage.setItem('cartItems', JSON.stringify(cartItemsArray));
         sendItemsToCartUI(cartItemsArray);
+        grandTotals(cartItemsArray);
+        document.querySelector('.cart-items').innerText = cartItemsArray.length;
+
     }
 }
 
@@ -252,3 +267,6 @@ fetch('products.json')
     });
 
 populateCartOnLoad();
+document.querySelector('.shop-now').addEventListener('click', event=>{
+    document.querySelector('.products').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
