@@ -1,4 +1,12 @@
 /**
+ * calculate mini totals for each product
+ * @param product
+ */
+function miniTotals(product) {
+
+}
+
+/**
  * calculate discounts
  * @param quantity
  * @return number
@@ -38,11 +46,14 @@ function chevron(itemId, direction) {
             }
         }
         cartItemArray[productIndex].discount = calculateDiscounts(cartItemArray[productIndex].quantity);
-        localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
+        let total = cartItemArray[productIndex].price * cartItemArray[productIndex].quantity;
+        cartItemArray[productIndex].total =parseFloat(total.toFixed(2));
+            localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
         sendItemsToCartUI(cartItemArray);
     }
 
 }
+
 /**
  * @param itemId
  * get add to cart button
@@ -51,6 +62,7 @@ function getAddToCartButton(itemId) {
     let bagButtons = [...document.querySelectorAll('.bag-btn')];
     return bagButtons.find(button => button.dataset.id === itemId)
 }
+
 /**
  * clear cart and repopulate the cart ui
  */
@@ -58,6 +70,7 @@ function clearCart() {
     localStorage.removeItem('cartItems');
     sendItemsToCartUI([]);
 }
+
 /**
  * populate cart ui
  * @param items
@@ -72,7 +85,7 @@ function sendItemsToCartUI(items) {
                     <h4>${product.title}</h4>
                     <h5>@: $${product.price}</h5>
                     <h5>Discount: $${product.discount}</h5>
-                    <h5>Total: $${product.price}</h5>
+                    <h5>Total: $${product.total}</h5>
                     <h5>Discounted Total: $${product.price}</h5>
                     <span data-id="${product.id}" class="remove-item">remove</span>
                 </div>
@@ -86,6 +99,7 @@ function sendItemsToCartUI(items) {
     });
     document.querySelector('.cart-content').innerHTML = cartItems;
 }
+
 /**
  * add items to cart
  * @param button
@@ -99,6 +113,7 @@ function addItemsToCart(button, products) {
     });
     product['quantity'] = 1;
     product['discount'] = 0;
+    product['total'] = product.price;
 
     //add items to local storage
     let items;
@@ -142,6 +157,7 @@ function addItemsToUI(products) {
     // send data to the UI
     document.querySelector('.products-center').innerHTML = productsHtmlString;
 }
+
 /**
  * populate cart on load
  */
@@ -153,6 +169,7 @@ function populateCartOnLoad() {
         sendItemsToCartUI(cartItemsArray);
     }
 }
+
 /**
  * removing an item from a cart
  * @param itemId
@@ -169,6 +186,7 @@ function removeItemFromCart(itemId) {
         sendItemsToCartUI(cartItemsArray);
     }
 }
+
 /**
  * open cart
  */
@@ -176,6 +194,7 @@ function openCart() {
     document.querySelector('.cart-overlay').style.visibility = 'visible';
     document.querySelector('.cart').style.transform = 'translateY(0)';
 }
+
 /**
  * close cart
  */
