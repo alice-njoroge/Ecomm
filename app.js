@@ -1,4 +1,24 @@
 /**
+ * calculate discounts
+ * @param quantity
+ * @return number
+ */
+function calculateDiscounts(quantity) {
+    let discount;
+    if (quantity >= 50) {
+        discount = quantity * 0.50;
+    } else if (quantity > 25 && quantity < 50) {
+        discount = quantity * 0.25;
+    } else if (quantity >= 10 && quantity <= 25) {
+        discount = quantity * 0.10;
+    } else {
+        discount = 0;
+    }
+    return parseFloat(discount.toFixed(2));
+}
+
+
+/**
  * add quantity by one on clicking chevron up
  * @param itemId
  * @param direction
@@ -15,17 +35,14 @@ function chevron(itemId, direction) {
         } else {
             if (cartItemArray[productIndex].quantity > 1) {
                 cartItemArray[productIndex].quantity -= 1;
-
             }
         }
+        cartItemArray[productIndex].discount = calculateDiscounts(cartItemArray[productIndex].quantity);
         localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
         sendItemsToCartUI(cartItemArray);
-
-
     }
 
 }
-
 /**
  * @param itemId
  * get add to cart button
@@ -34,16 +51,13 @@ function getAddToCartButton(itemId) {
     let bagButtons = [...document.querySelectorAll('.bag-btn')];
     return bagButtons.find(button => button.dataset.id === itemId)
 }
-
 /**
  * clear cart and repopulate the cart ui
  */
 function clearCart() {
     localStorage.removeItem('cartItems');
     sendItemsToCartUI([]);
-
 }
-
 /**
  * populate cart ui
  * @param items
@@ -57,7 +71,7 @@ function sendItemsToCartUI(items) {
                 <div>
                     <h4>${product.title}</h4>
                     <h5>@: $${product.price}</h5>
-                    <h5>Discount: $${product.price}</h5>
+                    <h5>Discount: $${product.discount}</h5>
                     <h5>Total: $${product.price}</h5>
                     <h5>Discounted Total: $${product.price}</h5>
                     <span data-id="${product.id}" class="remove-item">remove</span>
@@ -71,10 +85,7 @@ function sendItemsToCartUI(items) {
         cartItems += cartProduct;
     });
     document.querySelector('.cart-content').innerHTML = cartItems;
-
-
 }
-
 /**
  * add items to cart
  * @param button
@@ -87,6 +98,7 @@ function addItemsToCart(button, products) {
         return product.id === productId;
     });
     product['quantity'] = 1;
+    product['discount'] = 0;
 
     //add items to local storage
     let items;
@@ -98,7 +110,6 @@ function addItemsToCart(button, products) {
             items.push(product);// add product to the array
         }
         localStorage.setItem('cartItems', JSON.stringify(items));
-
     } else {
         items = [product];
         localStorage.setItem('cartItems', JSON.stringify(items));// put it in local storage
@@ -108,7 +119,6 @@ function addItemsToCart(button, products) {
     document.querySelector('.cart-items').innerText = items.length;
     // show cart on the screen
     openCart();
-
 }
 
 /**
@@ -131,9 +141,7 @@ function addItemsToUI(products) {
     });
     // send data to the UI
     document.querySelector('.products-center').innerHTML = productsHtmlString;
-
 }
-
 /**
  * populate cart on load
  */
@@ -144,9 +152,7 @@ function populateCartOnLoad() {
         document.querySelector('.cart-items').innerText = cartItemsArray.length;
         sendItemsToCartUI(cartItemsArray);
     }
-
 }
-
 /**
  * removing an item from a cart
  * @param itemId
@@ -162,9 +168,7 @@ function removeItemFromCart(itemId) {
         localStorage.setItem('cartItems', JSON.stringify(cartItemsArray));
         sendItemsToCartUI(cartItemsArray);
     }
-
 }
-
 /**
  * open cart
  */
@@ -172,7 +176,6 @@ function openCart() {
     document.querySelector('.cart-overlay').style.visibility = 'visible';
     document.querySelector('.cart').style.transform = 'translateY(0)';
 }
-
 /**
  * close cart
  */
@@ -207,8 +210,6 @@ document.querySelector('.cart-overlay').addEventListener('click', event => {
         chevron(itemId, 'down');
     }
 });
-
-
 // fetch data from products.json
 fetch('products.json')
     .then(response => response.json())
@@ -220,7 +221,6 @@ fetch('products.json')
             button.addEventListener('click', event => {
                 let button = event.target; //get the actual button id on click
                 addItemsToCart(button, products);
-
             })
         })
     });
