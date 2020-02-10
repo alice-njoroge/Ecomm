@@ -1,10 +1,29 @@
 /**
+ * add quantity by one on clicking chevron up
+ * @param itemId
+ */
+function chevronUp(itemId) {
+    let cartItem = localStorage.getItem('cartItems');
+    if (cartItem) {
+        let cartItemArray = JSON.parse(cartItem);
+        let productIndex = cartItemArray.findIndex(item => {
+            return item.id === itemId;
+        });
+        cartItemArray[productIndex].quantity += 1;
+        localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
+        sendItemsToCartUI(cartItemArray);
+
+
+    }
+
+}
+/**
  * @param itemId
  * get add to cart button
  */
 function getAddToCartButton(itemId) {
     let bagButtons = [...document.querySelectorAll('.bag-btn')];
-   return  bagButtons.find(button => button.dataset.id === itemId)
+    return bagButtons.find(button => button.dataset.id === itemId)
 }
 
 /**
@@ -35,9 +54,9 @@ function sendItemsToCartUI(items) {
                     <span data-id="${product.id}" class="remove-item">remove</span>
                 </div>
                 <div>
-                    <i class="fas fa-chevron-up"></i>
-                    <p class="item-amount">${product.quantity}</p>
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-up" data-id="${product.id}"></i>
+                    <p class="item-amount" data-id="${product.id}">${product.quantity}</p>
+                    <i class="fas fa-chevron-down" data-id="${product.id}"></i>
                 </div>
             </div><hr>`;
         cartItems += cartProduct;
@@ -168,7 +187,13 @@ document.querySelector('.cart-overlay').addEventListener('click', event => {
         let itemId = event.target.dataset.id;
         removeItemFromCart(itemId);
         let button = getAddToCartButton(itemId);
-       button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to bag`;
+        button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to bag`;
+    }
+    if (event.target.classList.contains('fa-chevron-up')) {
+        let itemId = event.target.dataset.id;
+        chevronUp(itemId);
+
+
     }
 });
 
