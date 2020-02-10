@@ -1,11 +1,25 @@
-//clear cart
+/**
+ * @param itemId
+ * get add to cart button
+ */
+function getAddToCartButton(itemId) {
+    let bagButtons = [...document.querySelectorAll('.bag-btn')];
+   return  bagButtons.find(button => button.dataset.id === itemId)
+}
+
+/**
+ * clear cart and repopulate the cart ui
+ */
 function clearCart() {
     localStorage.removeItem('cartItems');
     sendItemsToCartUI([]);
 
 }
 
-//send to ui
+/**
+ * populate cart ui
+ * @param items
+ */
 function sendItemsToCartUI(items) {
     let cartItems = '';
     items.forEach(product => {
@@ -18,11 +32,11 @@ function sendItemsToCartUI(items) {
                     <h5>Discount: $${product.price}</h5>
                     <h5>Total: $${product.price}</h5>
                     <h5>Discounted Total: $${product.price}</h5>
-                    <span class="remove-item">remove</span>
+                    <span data-id="${product.id}" class="remove-item">remove</span>
                 </div>
                 <div>
                     <i class="fas fa-chevron-up"></i>
-                    <p class="item-amount">4</p>
+                    <p class="item-amount">${product.quantity}</p>
                     <i class="fas fa-chevron-down"></i>
                 </div>
             </div><hr>`;
@@ -33,14 +47,18 @@ function sendItemsToCartUI(items) {
 
 }
 
-//add items to cart
+/**
+ * add items to cart
+ * @param button
+ * @param products
+ */
 function addItemsToCart(button, products) {
     button.innerText = 'Added to Bag'; // change button text
     let productId = button.dataset.id; // get the id of the button that was clicked
     let product = products.find(product => { // compare if the array id and the returned id are the same
         return product.id === productId;
     });
-
+    product['quantity'] = 1;
 
     //add items to local storage
     let items;
@@ -59,13 +77,16 @@ function addItemsToCart(button, products) {
     }
     //send items to cart ui
     sendItemsToCartUI(items);
-    document.querySelector('.cart-items').innerText= items.length;
+    document.querySelector('.cart-items').innerText = items.length;
     // show cart on the screen
     openCart();
 
 }
 
-//add items to the UI
+/**
+ * display products on the UI
+ * @param products
+ */
 function addItemsToUI(products) {
     let productsHtmlString = '';
     products.map((product, index) => {
@@ -85,45 +106,73 @@ function addItemsToUI(products) {
 
 }
 
-//open cart
+/**
+ * populate cart on load
+ */
+function populateCartOnLoad() {
+    let cartItems = localStorage.getItem('cartItems');
+    if (cartItems) {
+        let cartItemsArray = JSON.parse(cartItems);
+        document.querySelector('.cart-items').innerText = cartItemsArray.length;
+        sendItemsToCartUI(cartItemsArray);
+    }
+
+}
+
+/**
+ * removing an item from a cart
+ * @param itemId
+ */
+function removeItemFromCart(itemId) {
+    let cartItems = localStorage.getItem('cartItems');
+    if (cartItems) {
+        let cartItemsArray = JSON.parse(cartItems);
+        let itemIndex = cartItemsArray.findIndex(item => {
+            return item.id === itemId;
+        });
+        cartItemsArray.splice(itemIndex, 1);
+        localStorage.setItem('cartItems', JSON.stringify(cartItemsArray));
+        sendItemsToCartUI(cartItemsArray);
+    }
+
+}
+
+/**
+ * open cart
+ */
 function openCart() {
     document.querySelector('.cart-overlay').style.visibility = 'visible';
     document.querySelector('.cart').style.transform = 'translateY(0)';
 }
 
-//close cart
+/**
+ * close cart
+ */
 function closeCart() {
     document.querySelector('.cart').style.transform = 'translateY(100%)';
     document.querySelector('.cart-overlay').style.visibility = 'hidden';
 }
 
-document.querySelector('.close-cart').addEventListener('click', event => {
-    closeCart();
-});
 document.querySelector('.cart-btn').addEventListener('click', event => {
     openCart();
 });
-document.querySelector('.clear-cart').addEventListener('click', event => {
-    clearCart();
-});
 document.querySelector('.cart-overlay').addEventListener('click', event => {
-    if(event.target.getAttribute('class') === 'cart-overlay'){
+
+    if (event.target.getAttribute('class') === 'cart-overlay' || event.target.classList.contains('fa-window-close')) {
         closeCart();
     }
+    if (event.target.classList.contains('clear-cart')) {
+        clearCart();
+    }
+    if (event.target.classList.contains('remove-item')) {
+        let itemId = event.target.dataset.id;
+        removeItemFromCart(itemId);
+        let button = getAddToCartButton(itemId);
+       button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to bag`;
+    }
 });
 
 
-//populate cart on load
-function populateCartOnLoad(){
-    let cartItems = localStorage.getItem('cartItems');
-    if(cartItems){
-        let cartItemsArray = JSON.parse(cartItems);
-        document.querySelector('.cart-items').innerText= cartItemsArray.length;
-        sendItemsToCartUI(cartItemsArray);
-    }
-
-}
-populateCartOnLoad();
 // fetch data from products.json
 fetch('products.json')
     .then(response => response.json())
@@ -140,3 +189,4 @@ fetch('products.json')
         })
     });
 
+populateCartOnLoad();
