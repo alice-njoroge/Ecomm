@@ -59,6 +59,7 @@ function addItemsToCart(button, products) {
     }
     //send items to cart ui
     sendItemsToCartUI(items);
+    document.querySelector('.cart-items').innerText= items.length;
     // show cart on the screen
     openCart();
 
@@ -112,6 +113,17 @@ document.querySelector('.cart-overlay').addEventListener('click', event => {
 });
 
 
+//populate cart on load
+function populateCartOnLoad(){
+    let cartItems = localStorage.getItem('cartItems');
+    if(cartItems){
+        let cartItemsArray = JSON.parse(cartItems);
+        document.querySelector('.cart-items').innerText= cartItemsArray.length;
+        sendItemsToCartUI(cartItemsArray);
+    }
+
+}
+populateCartOnLoad();
 // fetch data from products.json
 fetch('products.json')
     .then(response => response.json())
