@@ -1,3 +1,10 @@
+//clear cart
+function clearCart() {
+    localStorage.removeItem('cartItems');
+    sendItemsToCartUI([]);
+
+}
+
 //send to ui
 function sendItemsToCartUI(items) {
     let cartItems = '';
@@ -7,7 +14,10 @@ function sendItemsToCartUI(items) {
                 <img src="${product.image}" alt="${product.title}">
                 <div>
                     <h4>${product.title}</h4>
-                    <h5>$${product.price}</h5>
+                    <h5>@: $${product.price}</h5>
+                    <h5>Discount: $${product.price}</h5>
+                    <h5>Total: $${product.price}</h5>
+                    <h5>Discounted Total: $${product.price}</h5>
                     <span class="remove-item">remove</span>
                 </div>
                 <div>
@@ -15,10 +25,10 @@ function sendItemsToCartUI(items) {
                     <p class="item-amount">4</p>
                     <i class="fas fa-chevron-down"></i>
                 </div>
-            </div>`;
-        cartItems +=cartProduct;
+            </div><hr>`;
+        cartItems += cartProduct;
     });
-    document.querySelector('.cart-content').innerHTML= cartItems;
+    document.querySelector('.cart-content').innerHTML = cartItems;
 
 
 }
@@ -38,7 +48,7 @@ function addItemsToCart(button, products) {
     if (cartItems) {
         items = JSON.parse(cartItems);
         let itemExists = items.find(item => item.id === product.id);
-        if(!itemExists){
+        if (!itemExists) {
             items.push(product);// add product to the array
         }
         localStorage.setItem('cartItems', JSON.stringify(items));
@@ -91,6 +101,14 @@ document.querySelector('.close-cart').addEventListener('click', event => {
 });
 document.querySelector('.cart-btn').addEventListener('click', event => {
     openCart();
+});
+document.querySelector('.clear-cart').addEventListener('click', event => {
+    clearCart();
+});
+document.querySelector('.cart-overlay').addEventListener('click', event => {
+    if(event.target.getAttribute('class') === 'cart-overlay'){
+        closeCart();
+    }
 });
 
 
