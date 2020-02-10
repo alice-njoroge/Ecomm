@@ -1,15 +1,23 @@
 /**
  * add quantity by one on clicking chevron up
  * @param itemId
+ * @param direction
  */
-function chevronUp(itemId) {
+function chevron(itemId, direction) {
     let cartItem = localStorage.getItem('cartItems');
     if (cartItem) {
         let cartItemArray = JSON.parse(cartItem);
         let productIndex = cartItemArray.findIndex(item => {
             return item.id === itemId;
         });
-        cartItemArray[productIndex].quantity += 1;
+        if (direction === 'up') {
+            cartItemArray[productIndex].quantity += 1;
+        } else {
+            if (cartItemArray[productIndex].quantity > 1) {
+                cartItemArray[productIndex].quantity -= 1;
+
+            }
+        }
         localStorage.setItem('cartItems', JSON.stringify(cartItemArray));
         sendItemsToCartUI(cartItemArray);
 
@@ -17,6 +25,7 @@ function chevronUp(itemId) {
     }
 
 }
+
 /**
  * @param itemId
  * get add to cart button
@@ -191,9 +200,11 @@ document.querySelector('.cart-overlay').addEventListener('click', event => {
     }
     if (event.target.classList.contains('fa-chevron-up')) {
         let itemId = event.target.dataset.id;
-        chevronUp(itemId);
-
-
+        chevron(itemId, 'up');
+    }
+    if (event.target.classList.contains('fa-chevron-down')) {
+        let itemId = event.target.dataset.id;
+        chevron(itemId, 'down');
     }
 });
 
